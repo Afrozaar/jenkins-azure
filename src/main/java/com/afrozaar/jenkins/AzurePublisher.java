@@ -1,6 +1,7 @@
 package com.afrozaar.jenkins;
 
 import com.microsoft.windowsazure.services.blob.client.BlobOutputStream;
+
 import com.microsoft.windowsazure.services.blob.client.CloudBlobClient;
 import com.microsoft.windowsazure.services.blob.client.CloudBlobContainer;
 import com.microsoft.windowsazure.services.blob.client.CloudBlockBlob;
@@ -34,41 +35,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AzurePublisher extends Notifier implements Serializable {
 
-    private final String storageAccount;
-
-    private final String sourcePath;
-
-    private final String destinationPath;
-
-    private final String container;
+    private List<Entry> azurePublishInstances;
 
     @DataBoundConstructor
-    public AzurePublisher(String storageAccount, String container, String sourcePath, String destinationPath) {
+    public AzurePublisher(List<Entry> azurePublishInstances) {
         super();
-        this.storageAccount = storageAccount;
-        this.container = container;
-        this.sourcePath = sourcePath;
-        this.destinationPath = destinationPath;
-
-    }
-
-    public String getStorageAccount() {
-        return storageAccount;
-    }
-
-    public String getSourcePath() {
-        return sourcePath;
-    }
-
-    public String getDestinationPath() {
-        return destinationPath;
-    }
-
-    public String getContainer() {
-        return container;
+        this.azurePublishInstances = azurePublishInstances != null ? azurePublishInstances : new ArrayList<Entry>();
     }
 
     // Overridden for better type safety.
@@ -84,13 +61,22 @@ public class AzurePublisher extends Notifier implements Serializable {
             IOException {
         listener.getLogger().println("Hello... this is the azure build publisher running");
 
-        listener.getLogger().println("storage account: " + storageAccount);
-        listener.getLogger().println("container: " + container);
-        listener.getLogger().println("source: " + sourcePath);
-        listener.getLogger().println("destination: " + destinationPath);
+        boolean x = true;
+        for (Entry instance : azurePublishInstances) {
+            x = x && deploy(build, listener, instance);
+        }
+        return x;
+    }
 
-        final String source = build.getEnvironment(listener).expand(sourcePath);
-        final String destination = build.getEnvironment(listener).expand(destinationPath);
+    private boolean deploy(AbstractBuild<?, ?> build, final BuildListener listener, final Entry instance)
+            throws IOException, InterruptedException {
+        listener.getLogger().println("storage account: " + instance.getStorageAccount());
+        listener.getLogger().println("container: " + instance.getContainer());
+        listener.getLogger().println("source: " + instance.getSourcePath());
+        listener.getLogger().println("destination: " + instance.getDestinationPath());
+
+        final String source = build.getEnvironment(listener).expand(instance.getSourcePath());
+        final String destination = build.getEnvironment(listener).expand(instance.getDestinationPath());
 
         listener.getLogger().println("replaced: " + source);
         listener.getLogger().println("replaced: " + destination);
@@ -111,7 +97,8 @@ public class AzurePublisher extends Notifier implements Serializable {
 
             public Boolean invoke(final File f, VirtualChannel channel) throws IOException, InterruptedException {
                 try {
-                    return deployFileToBlobStorage(storageAccount, container, f, destination, listener.getLogger());
+                    return deployFileToBlobStorage(instance.getStorageAccount(), instance.getContainer(), f, destination,
+                            listener.getLogger());
                 } catch (Exception e) {
                     throw new IOException("problem deploying to blob storage", e);
                 }
@@ -191,5 +178,13 @@ public class AzurePublisher extends Notifier implements Serializable {
         logger.println("DONE");
         return true;
 
+    }
+
+    public List<Entry> getAzurePublishInstances() {
+        return azurePublishInstances;
+    }
+
+    public void setAzurePublishInstances(List<Entry> instances) {
+        this.azurePublishInstances = instances;
     }
 }

@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.488</version><!-- which version of Jenkins is this plugin built 
+		<version>1.499</version><!-- which version of Jenkins is this plugin built 
 			against? -->
 	</parent>
 
 	<groupId>com.afrozaar.jenkins</groupId>
 	<artifactId>jenkins-azure</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<!-- get every artifact through repo.jenkins-ci.org, which proxies all the 
@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>com.microsoft.windowsazure</groupId>
 			<artifactId>microsoft-windowsazure-api</artifactId>
-			<version>0.3.1</version>
+			<version>0.3.3</version>
 		</dependency>
 	</dependencies>
 </project>
