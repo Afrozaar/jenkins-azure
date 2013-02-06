@@ -44,7 +44,7 @@ public class Entry extends AbstractDescribableImpl<Entry> {
     @Extension
     public static class DescriptorImpl extends Descriptor<Entry> {
         public String getDisplayName() {
-            return "";
+            return "Entry";
         }
     }
 

@@ -68,8 +68,8 @@ public class AzurePublisher extends Notifier implements Serializable {
         return x;
     }
 
-    private boolean deploy(AbstractBuild<?, ?> build, final BuildListener listener, final Entry instance)
-            throws IOException, InterruptedException {
+    private boolean deploy(AbstractBuild<?, ?> build, final BuildListener listener, final Entry instance) throws IOException,
+            InterruptedException {
         listener.getLogger().println("storage account: " + instance.getStorageAccount());
         listener.getLogger().println("container: " + instance.getContainer());
         listener.getLogger().println("source: " + instance.getSourcePath());
@@ -153,6 +153,7 @@ public class AzurePublisher extends Notifier implements Serializable {
     public boolean deployFileToBlobStorage(String storageAccount, String containerName, File file, String destinationName,
             PrintStream logger) throws Exception {
 
+        logger.println("=======");
         logger.println("starting");
         logger.println("StorageAccount=" + storageAccount);
         logger.println("deploy file  = " + file);
@@ -176,6 +177,7 @@ public class AzurePublisher extends Notifier implements Serializable {
         openOutputStream.close();
         input.close();
         logger.println("DONE");
+        logger.println("=======");
         return true;
 
     }
