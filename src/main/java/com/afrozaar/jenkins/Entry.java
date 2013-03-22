@@ -2,11 +2,13 @@ package com.afrozaar.jenkins;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.io.Serializable;
+
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 
-public class Entry extends AbstractDescribableImpl<Entry> {
+public class Entry extends AbstractDescribableImpl<Entry> implements Serializable {
 
     private final String storageAccount;
 

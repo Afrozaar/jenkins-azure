@@ -75,6 +75,8 @@ public class AzurePublisher extends Notifier implements Serializable {
         listener.getLogger().println("source: " + instance.getSourcePath());
         listener.getLogger().println("destination: " + instance.getDestinationPath());
 
+        final String container = build.getEnvironment(listener).expand(instance.getContainer());
+        final String storageAcount = build.getEnvironment(listener).expand(instance.getStorageAccount());
         final String source = build.getEnvironment(listener).expand(instance.getSourcePath());
         final String destination = build.getEnvironment(listener).expand(instance.getDestinationPath());
 
@@ -97,8 +99,7 @@ public class AzurePublisher extends Notifier implements Serializable {
 
             public Boolean invoke(final File f, VirtualChannel channel) throws IOException, InterruptedException {
                 try {
-                    return deployFileToBlobStorage(instance.getStorageAccount(), instance.getContainer(), f, destination,
-                            listener.getLogger());
+                    return deployFileToBlobStorage(storageAcount, container, f, destination, listener.getLogger());
                 } catch (Exception e) {
                     throw new IOException("problem deploying to blob storage", e);
                 }
